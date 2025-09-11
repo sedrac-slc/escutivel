@@ -40,7 +40,7 @@ export default function Home() {
             </div>
             <div className="">
               <div className="mb-2">Gerência</div>
-              <div className="flex gap-5 md:gap-10">
+              <div className="flex flex-col md:flex-row gap-5 md:gap-10">
                 {groups.map(it => (
                   <div className="border-2 border-white rounded-2xl p-2" key={it.name} >
                     <div className="bg-green-600 rounded-2xl p-2 flex flex-col gap-2 h-full">
