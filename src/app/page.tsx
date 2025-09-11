@@ -43,7 +43,7 @@ export default function Home() {
               <div className="flex flex-col md:flex-row gap-5 md:gap-10">
                 {groups.map(it => (
                   <div className="border-2 border-white rounded-2xl p-2" key={it.name} >
-                    <div className="bg-green-600 rounded-2xl p-2 flex flex-col gap-2 h-full">
+                    <div className="bg-green-600 rounded-2xl p-2 flex flex-col gap-2 md:h-full">
                       <Badge className="bg-white text-black p-2 px-5 rounded-full border-none">
                         {it.name}
                       </Badge>
