@@ -18,8 +18,8 @@ export default function Home() {
   ];
 
   return (
-    <>
-      <header className="bg-[#22906c] text-white h-screen w-screen">
+    <body className="bg-[#22906c]">
+      <header className="text-white h-screen w-screen">
         <section className="flex gap-5 px-5 md:px-20 lg:px-30 py-5 md:py-10">
           <div className="flex flex-col justify-center items-start gap-5 lg:w-4/6">
             <div className={`text-3xl lg:text-5xl ${title.className}`}>Bem vindo ao Escutivel</div>
@@ -55,10 +55,10 @@ export default function Home() {
             </div>
           </div>
           <div className="hidden md:block">
-            <Image src="/8439483_family_playing_together_activity_siblings_icon.png" alt="" width={700} height={700}/>
+            <Image src="/8439483_family_playing_together_activity_siblings_icon.png" alt="" width={700} height={700} />
           </div>
         </section>
       </header>
-    </>
+    </body>
   );
 }
