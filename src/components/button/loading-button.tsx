@@ -9,7 +9,7 @@ interface LoadingButtonProps extends React.ComponentProps<"button"> {
 export function LoadingButton({ loading = false, ...props }: LoadingButtonProps & VariantProps<typeof buttonVariants> ) {
     return loading ? (
         <Button disabled>
-            <Spinner /> Loading...
+            <Spinner /> Carregando...
         </Button>
     ) : (
         <Button {...props} >{props.children}</Button>
