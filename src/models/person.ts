@@ -1,4 +1,5 @@
 interface PersonProps {
+  id?: string
   name: string
   birthDate: Date
   gender: string
@@ -13,7 +14,7 @@ interface PersonProps {
 }
 
 export class Person {
-  protected id: number;
+  public id: string;
   public name: string
   public birthDate: Date
   public gender: string
@@ -38,7 +39,7 @@ export class Person {
     this.phoneNumber = props.phoneNumber
     this.baptismDate = props.baptismDate
     this.baptismChurch = props.baptismChurch
-    this.id = 0
+    this.id = props.id ? props.id : ''
   }
 
   get age(): number {

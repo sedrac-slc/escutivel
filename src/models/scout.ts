@@ -1,6 +1,7 @@
 import { Person } from "./person";
 
 interface ScoutProps {
+  id?: string
   person: Person
   groupNumber?: string // Número do Agrupamento
   unitName?: string // Nome da Unidade Escutista
@@ -15,7 +16,7 @@ interface ScoutProps {
 }
 
 export class Scout {
-  protected id: number;
+  public id: string;
   public person: Person
   public groupNumber?: string
   public unitName?: string
@@ -40,7 +41,7 @@ export class Scout {
     this.hasContagiousDisease = props.hasContagiousDisease
     this.hasPhysicalRobustness = props.hasPhysicalRobustness
     this.medicalObservations = props.medicalObservations
-    this.id = 0
+    this.id = props.id ? props.id : ''
   }
 
   get isActive(): boolean {

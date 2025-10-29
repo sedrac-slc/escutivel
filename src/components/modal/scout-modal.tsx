@@ -12,7 +12,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ChevronRight, ChevronLeft, UserPlus } from 'lucide-react';
+import { ChevronRight, ChevronLeft, UserPlus, Loader2 } from 'lucide-react';
+import { Person } from '@/models/person';
+import { Scout } from '@/models/scout';
+import { toast } from 'sonner'; // ou use o toast do shadcn/ui
+import { PersonService } from '@/service/person.service';
+import { ScoutService } from '@/service/scout.service';
 
 const FormField = ({ id, label, value, onChange, type = "text", placeholder, required = true }: any) => (
     <div className="grid gap-2">
@@ -54,11 +59,19 @@ const INITIAL_SCOUT_DATA = {
     medicalObservations: ''
 };
 
-export default function ScoutModal() {
+interface ScoutModalProps {
+    onSuccess?: () => void;
+}
+
+export default function ScoutModal({ onSuccess }: ScoutModalProps) {
     const [open, setOpen] = useState(false);
     const [step, setStep] = useState(1);
+    const [loading, setLoading] = useState(false);
     const [personData, setPersonData] = useState(INITIAL_PERSON_DATA);
     const [scoutData, setScoutData] = useState(INITIAL_SCOUT_DATA);
+
+    const personService = new PersonService();
+    const scoutService = new ScoutService();
 
     const handlePersonChange = (field: string, value: string) =>
         setPersonData(prev => ({ ...prev, [field]: value }));
@@ -71,11 +84,59 @@ export default function ScoutModal() {
 
     const handleNext = () => validateStep1() && setStep(2);
 
-    const handleSubmit = () => {
-        if (validateStep2()) {
-            console.log('Person Data:', personData);
-            console.log('Scout Data:', scoutData);
+    const handleSubmit = async () => {
+        if (!validateStep2()) return;
+
+        setLoading(true);
+
+        try {
+            // 1. Criar a pessoa primeiro
+            const person = new Person({
+                name: personData.name,
+                birthDate: new Date(personData.birthDate),
+                gender: personData.gender,
+                birthPlace: personData.birthPlace || undefined,
+                province: personData.province || undefined,
+                municipality: personData.municipality || undefined,
+                commune: personData.commune || undefined,
+                address: personData.address || undefined,
+                phoneNumber: personData.phoneNumber || undefined,
+                baptismDate: personData.baptismDate ? new Date(personData.baptismDate) : undefined,
+                baptismChurch: personData.baptismChurch || undefined,
+            });
+
+            const createdPerson = await personService.create(person);
+
+            // 2. Criar o escuteiro associado à pessoa
+            const scout = new Scout({
+                person: createdPerson,
+                groupNumber: scoutData.groupNumber,
+                unitName: scoutData.unitName,
+                previousScoutUnit: scoutData.previousScoutUnit || undefined,
+                previousAssociation: scoutData.previousAssociation || undefined,
+                proposalNumber: scoutData.proposalNumber || undefined,
+                registrationDate: new Date(), // Data atual como data de registro
+                hasContagiousDisease: scoutData.hasContagiousDisease,
+                hasPhysicalRobustness: scoutData.hasPhysicalRobustness,
+                medicalObservations: scoutData.medicalObservations || undefined,
+            });
+
+            await scoutService.create(scout);
+
+            toast.success('Escuteiro cadastrado com sucesso!', {
+                description: `${personData.name} foi registrado no sistema.`
+            });
+
             handleClose();
+            onSuccess?.(); // Callback para atualizar lista, se fornecido
+
+        } catch (error) {
+            console.error('Erro ao cadastrar escuteiro:', error);
+            toast.error('Erro ao cadastrar escuteiro', {
+                description: error instanceof Error ? error.message : 'Tente novamente mais tarde.'
+            });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -266,53 +327,60 @@ export default function ScoutModal() {
     );
 
     return (
-        <div className="flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-100">
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                    <Button className="shadow-lg" size="lg">
-                        <UserPlus className="mr-2 h-5 w-5" />
-                        Cadastrar Escuteiro
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button className="shadow-lg" size="lg">
+                    <UserPlus className="mr-2 h-5 w-5" />
+                    Cadastrar Escuteiro
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                    <DialogTitle>
+                        {step === 1 ? 'Dados Pessoais' : 'Dados do Escuteiro'}
+                    </DialogTitle>
+                    <DialogDescription>
+                        {step === 1
+                            ? 'Preencha as informações pessoais do candidato'
+                            : 'Preencha as informações específicas do escuteiro'}
+                    </DialogDescription>
+                    <div className="flex items-center gap-2 pt-2">
+                        <div className={`flex-1 h-2 rounded-full transition-colors ${step >= 1 ? 'bg-green-600' : 'bg-gray-200'}`} />
+                        <div className={`flex-1 h-2 rounded-full transition-colors ${step >= 2 ? 'bg-green-600' : 'bg-gray-200'}`} />
+                    </div>
+                </DialogHeader>
+
+                {step === 1 ? renderPersonalDataForm() : renderScoutDataForm()}
+
+                <DialogFooter className="gap-2">
+                    <Button variant="outline" onClick={handleClose} disabled={loading}>
+                        Cancelar
                     </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[800px] overflow-y-auto">
-                    <DialogHeader>
-                        <DialogTitle>
-                            {step === 1 ? 'Dados Pessoais' : 'Dados do Escuteiro'}
-                        </DialogTitle>
-                        <DialogDescription>
-                            {step === 1
-                                ? 'Preencha as informações pessoais do candidato'
-                                : 'Preencha as informações específicas do escuteiro'}
-                        </DialogDescription>
-                        <div className="flex items-center gap-2 pt-2">
-                            <div className={`flex-1 h-2 rounded-full ${step >= 1 ? 'bg-green-600' : 'bg-gray-200'}`} />
-                            <div className={`flex-1 h-2 rounded-full ${step >= 2 ? 'bg-green-600' : 'bg-gray-200'}`} />
-                        </div>
-                    </DialogHeader>
-
-                    {step === 1 ? renderPersonalDataForm() : renderScoutDataForm()}
-
-                    <DialogFooter>
-                        <Button variant="outline" onClick={handleClose}>Cancelar</Button>
-                        {step === 1 ? (
-                            <Button onClick={handleNext} disabled={!validateStep1()}>
-                                Próximo
-                                <ChevronRight className="ml-2 h-4 w-4" />
+                    {step === 1 ? (
+                        <Button onClick={handleNext} disabled={!validateStep1()}>
+                            Próximo
+                            <ChevronRight className="ml-2 h-4 w-4" />
+                        </Button>
+                    ) : (
+                        <>
+                            <Button variant="outline" onClick={() => setStep(1)} disabled={loading}>
+                                <ChevronLeft className="mr-2 h-4 w-4" />
+                                Voltar
                             </Button>
-                        ) : (
-                            <>
-                                <Button variant="outline" onClick={() => setStep(1)}>
-                                    <ChevronLeft className="mr-2 h-4 w-4" />
-                                    Voltar
-                                </Button>
-                                <Button onClick={handleSubmit} disabled={!validateStep2()}>
-                                    Cadastrar
-                                </Button>
-                            </>
-                        )}
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        </div>
+                            <Button onClick={handleSubmit} disabled={!validateStep2() || loading}>
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Cadastrando...
+                                    </>
+                                ) : (
+                                    'Cadastrar'
+                                )}
+                            </Button>
+                        </>
+                    )}
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }
