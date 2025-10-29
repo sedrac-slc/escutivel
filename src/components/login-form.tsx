@@ -9,6 +9,7 @@ import { useState } from "react";
 import { supabase } from "@/supabase";
 import { LoadingButton } from "./button/loading-button";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useRouter } from "next/navigation";
 
 export function LoginForm({
   className,
@@ -16,9 +17,12 @@ export function LoginForm({
 }: React.ComponentProps<"form">) {
   const [loading, setLoading] = useState(false);
   const [credencial, setCredencial] = useState({
-    email: 'slcsedrac@gmail.com',
-    password: 'slcsedrac@gmail.com'
+    email: '',
+    password: ''
   });
+
+  const navigate = useRouter();
+
   const setAuth = useAuthStore((state) => state.setAuth);
 
   const onSubmit = async () => {
@@ -45,6 +49,8 @@ export function LoginForm({
       secure: process.env.NODE_ENV === 'production',
       expires: 1, // Exemplo: expira em 1 dia
     });
+
+    navigate.push('/dashboard');
   }
 
   return (

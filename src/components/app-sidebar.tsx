@@ -46,16 +46,16 @@ const data = {
         },
         {
           title: "Júnior",
-          url: "#",
-          isActive: true,
+          url: "/dashboard/scout/junior",
+          isActive: false,
         },
         {
           title: "Senior",
-          url: "#",
+          url: "/dashboard/scout/senior",
         },
         {
           title: "Caminheiro",
-          url: "#",
+          url: "/dashboard/scout/trucker",
         },
       ],
     },

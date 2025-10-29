@@ -1,4 +1,4 @@
-import { DataTableDemo } from "./datatable"
+import { ScoutDataTable } from "./datatable/socout-datatable"
 
 interface ScoutPanelProps {
     type: 'lobito' | 'junior' | 'senior' | 'trucker'
@@ -6,6 +6,6 @@ interface ScoutPanelProps {
 
 export default function ScoutPanel({ type }: Readonly<ScoutPanelProps>) {
     return (
-        <DataTableDemo/>
+        <ScoutDataTable/>
     )
 }
