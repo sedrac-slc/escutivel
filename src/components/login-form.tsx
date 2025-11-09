@@ -76,7 +76,7 @@ export function LoginForm({
               Esqueci minha senha?
             </Link>
           </div>
-          <Input id="password" type="password" value={credencial.email} onChange={(evt) => setCredencial({ ...credencial, email: evt.target.value })} required />
+          <Input id="password" type="password" value={credencial.password} onChange={(evt) => setCredencial({ ...credencial, password: evt.target.value })} required />
         </div>
         <LoadingButton loading={loading} type="submit" className="w-full" onClick={onSubmit}>
           Entrar
