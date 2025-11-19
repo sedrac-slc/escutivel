@@ -13,6 +13,7 @@ interface ScoutProps {
   hasContagiousDisease?: boolean // Sofre de doença contagiosa
   hasPhysicalRobustness?: boolean // Tem robustez física necessária
   medicalObservations?: string // Observações médicas
+  type: string
 }
 
 export class Scout {
@@ -28,6 +29,7 @@ export class Scout {
   public hasContagiousDisease?: boolean
   public hasPhysicalRobustness?: boolean
   public medicalObservations?: string
+  public type: string
 
   constructor(props: ScoutProps) {
     this.person = props.person
@@ -42,6 +44,7 @@ export class Scout {
     this.hasPhysicalRobustness = props.hasPhysicalRobustness
     this.medicalObservations = props.medicalObservations
     this.id = props.id ? props.id : ''
+    this.type = props.type
   }
 
   get isActive(): boolean {

@@ -1,5 +1,5 @@
 import ScoutPanel from "@/components/sout-panel";
 
 export default function Page(){
-    return <ScoutPanel type="lobito"/>;
+    return <ScoutPanel type="LOBITO"/>;
 }

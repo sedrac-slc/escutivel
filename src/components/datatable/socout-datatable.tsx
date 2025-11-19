@@ -33,8 +33,10 @@ import {
 import ScoutModal from "../modal/scout-modal"
 import { Person } from "@/models/person"
 import { scoutColumns } from "../columns/scout-columns"
+import ScoutTitle from "../sout-title"
 
-export function ScoutDataTable() {
+export function ScoutDataTable(props: {type: string}) {
+  const [search, setSearch] = React.useState('')
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -63,13 +65,12 @@ export function ScoutDataTable() {
 
   return (
     <div className="w-full">
+      <ScoutTitle type={props.type} />
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
+          placeholder="Procurar..."
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
           className="max-w-sm"
         />
         <DropdownMenu>
@@ -79,7 +80,7 @@ export function ScoutDataTable() {
                 Colunas <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
-            <ScoutModal />
+            <ScoutModal type={props.type}/>
           </div>
           <DropdownMenuContent align="end">
             {table

@@ -8,7 +8,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={``}>
+      <body>
         {children}
         <Toaster />
       </body>

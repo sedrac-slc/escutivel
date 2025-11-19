@@ -10,6 +10,7 @@ import { supabase } from "@/supabase";
 import { LoadingButton } from "./button/loading-button";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function LoginForm({
   className,
@@ -31,9 +32,12 @@ export function LoginForm({
       email: credencial.email,
       password: credencial.password,
     })
+
     setLoading(false);
 
-    if (!data) {
+    if (!data.user) {
+      toast('Falha no processo de login');
+      Cookies.remove('auth_token');
       return
     }
 

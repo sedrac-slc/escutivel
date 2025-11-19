@@ -61,9 +61,10 @@ const INITIAL_SCOUT_DATA = {
 
 interface ScoutModalProps {
     onSuccess?: () => void;
+    type: string;
 }
 
-export default function ScoutModal({ onSuccess }: ScoutModalProps) {
+export default function ScoutModal({ onSuccess, type }: ScoutModalProps) {
     const [open, setOpen] = useState(false);
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -90,7 +91,6 @@ export default function ScoutModal({ onSuccess }: ScoutModalProps) {
         setLoading(true);
 
         try {
-            // 1. Criar a pessoa primeiro
             const person = new Person({
                 name: personData.name,
                 birthDate: new Date(personData.birthDate),
@@ -107,7 +107,6 @@ export default function ScoutModal({ onSuccess }: ScoutModalProps) {
 
             const createdPerson = await personService.create(person);
 
-            // 2. Criar o escuteiro associado à pessoa
             const scout = new Scout({
                 person: createdPerson,
                 groupNumber: scoutData.groupNumber,
@@ -115,10 +114,11 @@ export default function ScoutModal({ onSuccess }: ScoutModalProps) {
                 previousScoutUnit: scoutData.previousScoutUnit || undefined,
                 previousAssociation: scoutData.previousAssociation || undefined,
                 proposalNumber: scoutData.proposalNumber || undefined,
-                registrationDate: new Date(), // Data atual como data de registro
+                registrationDate: new Date(),
                 hasContagiousDisease: scoutData.hasContagiousDisease,
                 hasPhysicalRobustness: scoutData.hasPhysicalRobustness,
                 medicalObservations: scoutData.medicalObservations || undefined,
+                type
             });
 
             await scoutService.create(scout);
